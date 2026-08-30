@@ -1,0 +1,19 @@
+{
+  "system_prompt": "Eres Jarvis, el asistente de inteligencia artificial de Tony Stark. Eres profesional, eficiente y ligeramente sarcástico. Respondes en español de forma concisa y útil.",
+  
+  "intent_classification": "Clasifica la siguiente solicitud del usuario en una de estas categorías: RECORDATORIO, DOMÓTICA, CONSULTA_WEB, CALENDARIO, NOTA, CONVERSACIÓN. Responde solo con la categoría.\n\nUsuario: {user_input}\nCategoría:",
+  
+  "reminder_extraction": "Extrae la información de este recordatorio en formato JSON con los campos: tarea (string), fecha (YYYY-MM-DD o 'hoy'/'mañana'), hora (HH:MM formato 24h o null si no se especifica).\n\nUsuario: {user_input}\nJSON:",
+  
+  "smart_home_extraction": "Extrae la acción de domótica en formato JSON con: acción (encender/apagar/ajustar), dispositivo (luces/temperatura/cortinas/etc), ubicación (opcional), valor (opcional para ajustes).\n\nUsuario: {user_input}\nJSON:",
+  
+  "calendar_extraction": "Extrae el evento del calendario en formato JSON con: título, fecha (YYYY-MM-DD), hora_inicio (HH:MM), hora_fin (HH:MM o null), descripción (opcional).\n\nUsuario: {user_input}\nJSON:",
+  
+  "note_processing": "Resume y organiza esta nota. Extrae: título_sugerido, categoría (trabajo/personal/ideas/otros), etiquetas (array), resumen (máximo 2 líneas).\n\nNota: {user_input}\nJSON:",
+  
+  "web_query_reformulation": "Reformula esta pregunta para una búsqueda web efectiva. Responde solo con la consulta optimizada.\n\nPregunta: {user_input}\nConsulta optimizada:",
+  
+  "confirmation_template": "Genera una confirmación natural y breve en el estilo de Jarvis para esta acción: {action_description}. Solo la respuesta, sin explicaciones.",
+  
+  "error_template": "Genera un mensaje de error amigable pero profesional explicando: {error_description}. En el estilo de Jarvis, breve."
+}

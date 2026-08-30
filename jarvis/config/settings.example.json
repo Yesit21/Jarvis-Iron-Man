@@ -1,0 +1,43 @@
+{
+  "ollama": {
+    "base_url": "http://localhost:11434",
+    "default_model": "llama3.1",
+    "temperature": 0.7,
+    "context_window": 8192
+  },
+  "general": {
+    "language": "es",
+    "timezone": "America/Mexico_City",
+    "user_name": "Usuario"
+  },
+  "modules": {
+    "reminders": {
+      "enabled": true,
+      "db_path": "data/reminders.db",
+      "notification_sound": true
+    },
+    "smart_home": {
+      "enabled": false,
+      "home_assistant_url": "",
+      "home_assistant_token": ""
+    },
+    "web_queries": {
+      "enabled": true,
+      "search_engine": "duckduckgo"
+    },
+    "calendar": {
+      "enabled": true,
+      "db_path": "data/calendar.db"
+    },
+    "notes": {
+      "enabled": true,
+      "notes_path": "data/notes/"
+    }
+  },
+  "voice": {
+    "enabled": false,
+    "input_device": null,
+    "wake_word": "jarvis",
+    "tts_engine": "pyttsx3"
+  }
+}
