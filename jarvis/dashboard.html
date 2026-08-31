@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JARVIS Server Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .status.online {
+            background: #4CAF50;
+        }
+        
+        .status.offline {
+            background: #f44336;
+        }
+        
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card h3 {
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .card-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .chat-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+        }
+        
+        #chat-messages {
+            height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            animation: slideIn 0.3s;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .message.user {
+            background: rgba(33, 150, 243, 0.3);
+            text-align: right;
+        }
+        
+        .message.jarvis {
+            background: rgba(76, 175, 80, 0.3);
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        input[type="text"] {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-size: 1em;
+        }
+        
+        button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            background: #4CAF50;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #45a049;
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 10px;
+            color: #ffd700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 JARVIS Server Dashboard</h1>
+            <div class="status" id="status">🔍 Verificando...</div>
+        </header>
+        
+        <div class="cards">
+            <div class="card">
+                <h3>📊 Estado del Servidor</h3>
+                <div class="card-value" id="server-status">--</div>
+                <small id="server-model">Modelo: --</small>
+            </div>
+            
+            <div class="card">
+                <h3>💬 Conversaciones</h3>
+                <div class="card-value" id="conversations">0</div>
+                <small>Total registradas</small>
+            </div>
+            
+            <div class="card">
+                <h3>🧠 Memoria</h3>
+                <div class="card-value" id="memory-stats">--</div>
+                <small>Hechos almacenados</small>
+            </div>
+            
+            <div class="card">
+                <h3>⏰ Uptime</h3>
+                <div class="card-value" id="uptime">--</div>
+                <small>Tiempo activo</small>
+            </div>
+        </div>
+        
+        <div class="chat-section">
+            <h2 style="margin-bottom: 20px;">💭 Chat con JARVIS</h2>
+            <div id="chat-messages"></div>
+            <div class="loading" id="loading">⏳ JARVIS está pensando...</div>
+            <div class="input-group">
+                <input type="text" id="message-input" placeholder="Escribe tu mensaje aquí..." onkeypress="if(event.key==='Enter') sendMessage()">
+                <button onclick="sendMessage()">Enviar</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Configuración - CAMBIAR ESTA IP A LA DE TU SERVIDOR
+        const SERVER_URL = 'http://192.168.1.100:5000';
+        
+        let startTime = Date.now();
+        
+        // Verificar estado del servidor
+        async function checkHealth() {
+            try {
+                const response = await fetch(`${SERVER_URL}/api/health`);
+                const data = await response.json();
+                
+                document.getElementById('status').textContent = '✅ Online';
+                document.getElementById('status').className = 'status online';
+                document.getElementById('server-status').textContent = data.status;
+                document.getElementById('server-model').textContent = `Modelo: ${data.model}`;
+                
+                return true;
+            } catch (error) {
+                document.getElementById('status').textContent = '❌ Offline';
+                document.getElementById('status').className = 'status offline';
+                document.getElementById('server-status').textContent = 'Error';
+                return false;
+            }
+        }
+        
+        // Obtener estadísticas
+        async function getStats() {
+            try {
+                const memoryResponse = await fetch(`${SERVER_URL}/api/memory/stats`);
+                const memoryData = await memoryResponse.json();
+                
+                document.getElementById('memory-stats').textContent = memoryData.user_facts || 0;
+                document.getElementById('conversations').textContent = memoryData.total_conversations || 0;
+            } catch (error) {
+                console.error('Error obteniendo stats:', error);
+            }
+        }
+        
+        // Actualizar uptime
+        function updateUptime() {
+            const elapsed = Date.now() - startTime;
+            const hours = Math.floor(elapsed / 3600000);
+            const minutes = Math.floor((elapsed % 3600000) / 60000);
+            const seconds = Math.floor((elapsed % 60000) / 1000);
+            
+            document.getElementById('uptime').textContent = 
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        // Enviar mensaje
+        async function sendMessage() {
+            const input = document.getElementById('message-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Mostrar mensaje del usuario
+            addMessage(message, 'user');
+            input.value = '';
+            
+            // Mostrar loading
+            document.getElementById('loading').style.display = 'block';
+            
+            try {
+                const response = await fetch(`${SERVER_URL}/api/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+                
+                const data = await response.json();
+                
+                // Mostrar respuesta de JARVIS
+                addMessage(data.response, 'jarvis');
+            } catch (error) {
+                addMessage('Error: No se pudo conectar con el servidor', 'jarvis');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+        
+        // Agregar mensaje al chat
+        function addMessage(text, type) {
+            const messagesDiv = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.textContent = type === 'user' ? `Tú: ${text}` : `JARVIS: ${text}`;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        
+        // Inicializar
+        checkHealth();
+        getStats();
+        setInterval(updateUptime, 1000);
+        setInterval(checkHealth, 10000); // Verificar cada 10s
+        setInterval(getStats, 30000); // Stats cada 30s
+    </script>
+</body>
+</html>

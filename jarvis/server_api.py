@@ -80,6 +80,22 @@ class JarvisServer:
     def _register_routes(self):
         """Registrar todas las rutas de la API"""
         
+        @self.app.route('/')
+        def index():
+            """Página principal - redirige al dashboard"""
+            return "<h1>JARVIS Server</h1><p>API corriendo correctamente</p><p><a href='/dashboard.html'>Ir al Dashboard</a></p>"
+        
+        @self.app.route('/dashboard.html')
+        def dashboard():
+            """Servir dashboard HTML"""
+            import os
+            dashboard_path = os.path.join(os.path.dirname(__file__), 'dashboard.html')
+            try:
+                with open(dashboard_path, 'r', encoding='utf-8') as f:
+                    return f.read()
+            except FileNotFoundError:
+                return "<h1>Dashboard no encontrado</h1>", 404
+        
         @self.app.route('/api/health', methods=['GET'])
         def health_check():
             """Verificar estado del servidor"""
