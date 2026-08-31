@@ -68,3 +68,4 @@ logs/
 
 # Qodo
 .qodo/
+venv311/

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>J.A.R.V.I.S - Stark Industries</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background: #000;
+            color: #0ff;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Círculo central animado */
+        .core {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 300px;
+        }
+
+        .circle {
+            position: absolute;
+            border: 2px solid #0ff;
+            border-radius: 50%;
+            opacity: 0.3;
+        }
+
+        .circle1 { width: 100%; height: 100%; animation: pulse1 2s ease-in-out infinite; }
+        .circle2 { width: 80%; height: 80%; top: 10%; left: 10%; animation: pulse2 2s ease-in-out infinite 0.3s; }
+        .circle3 { width: 60%; height: 60%; top: 20%; left: 20%; animation: pulse1 2s ease-in-out infinite 0.6s; }
+
+        @keyframes pulse1 {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.1); opacity: 0.6; }
+        }
+
+        @keyframes pulse2 {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(0.9); opacity: 0.6; }
+        }
+
+        /* Logo JARVIS central */
+        .jarvis-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+        }
+
+        .jarvis-logo {
+            font-size: 4em;
+            font-weight: 900;
+            text-shadow: 0 0 30px #0ff, 0 0 60px #0ff, 0 0 90px #0ff;
+            letter-spacing: 10px;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 30px #0ff, 0 0 60px #0ff; }
+            50% { text-shadow: 0 0 40px #0ff, 0 0 80px #0ff, 0 0 120px #0ff; }
+        }
+
+        .status-text {
+            margin-top: 20px;
+            font-size: 1.2em;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .listening {
+            color: #0f0;
+            text-shadow: 0 0 20px #0f0;
+            animation: blink 0.8s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* Ondas de audio */
+        .audio-wave {
+            position: fixed;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            height: 80px;
+            align-items: flex-end;
+        }
+
+        .wave-bar {
+            width: 6px;
+            background: linear-gradient(to top, #0ff, #0af);
+            border-radius: 3px;
+            transition: height 0.1s;
+        }
+
+        /* Transcript minimalista */
+        .transcript {
+            position: fixed;
+            bottom: 150px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            max-width: 800px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 20px;
+            background: rgba(0, 255, 255, 0.05);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .msg {
+            margin: 10px 0;
+            padding: 10px;
+            border-left: 3px solid #0ff;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .msg.user { color: #fff; border-left-color: #fff; }
+        .msg.jarvis { color: #0ff; border-left-color: #0ff; }
+
+        /* HUD mínimo */
+        .hud {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            text-align: right;
+            font-size: 0.9em;
+            opacity: 0.6;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .hud-item {
+            margin: 5px 0;
+        }
+
+        /* Partículas de fondo */
+        .particle {
+            position: fixed;
+            width: 2px;
+            height: 2px;
+            background: #0ff;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) translateX(0); }
+            100% { transform: translateY(-10vh) translateX(100px); }
+        }
+
+        /* Scrollbar */
+        .transcript::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .transcript::-webkit-scrollbar-track {
+            background: rgba(0, 255, 255, 0.1);
+        }
+
+        .transcript::-webkit-scrollbar-thumb {
+            background: #0ff;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Partículas -->
+    <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+    <div class="particle" style="left: 30%; animation-delay: 3s;"></div>
+    <div class="particle" style="left: 50%; animation-delay: 6s;"></div>
+    <div class="particle" style="left: 70%; animation-delay: 9s;"></div>
+    <div class="particle" style="left: 90%; animation-delay: 12s;"></div>
+
+    <!-- HUD -->
+    <div class="hud">
+        <div class="hud-item">Status: <span id="hud-status">Online</span></div>
+        <div class="hud-item">Model: llama3.2</div>
+        <div class="hud-item"><span id="hud-time">00:00:00</span></div>
+    </div>
+
+    <!-- Core central -->
+    <div class="core">
+        <div class="circle circle1"></div>
+        <div class="circle circle2"></div>
+        <div class="circle circle3"></div>
+    </div>
+
+    <div class="jarvis-center">
+        <div class="jarvis-logo">JARVIS</div>
+        <div class="status-text" id="status">Esperando activación por voz...</div>
+    </div>
+
+    <!-- Visualizador de audio -->
+    <div class="audio-wave" id="wave">
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+    </div>
+
+    <!-- Transcript -->
+    <div class="transcript" id="transcript"></div>
+
+    <script>
+        let recognition;
+        let isActive = false;
+        const wakePhrases = ["jarvis", "hey jarvis"];
+
+        // Iniciar reconocimiento AUTOMÁTICAMENTE
+        if ('webkitSpeechRecognition' in window) {
+            recognition = new webkitSpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = false;
+            recognition.lang = 'es-ES';
+
+            // Auto-iniciar al cargar
+            setTimeout(() => {
+                recognition.start();
+                updateStatus("Escuchando palabra de activación...");
+            }, 500);
+
+            recognition.onresult = function(event) {
+                const last = event.results.length - 1;
+                const text = event.results[last][0].transcript.toLowerCase();
+                const confidence = event.results[last][0].confidence;
+
+                if (confidence > 0.5) {
+                    handleSpeech(text);
+                }
+            };
+
+            recognition.onerror = function(event) {
+                if (event.error !== 'no-speech') {
+                    console.error('Error:', event.error);
+                }
+            };
+
+            recognition.onend = function() {
+                // Auto-reiniciar
+                setTimeout(() => recognition.start(), 500);
+            };
+        } else {
+            updateStatus("Tu navegador no soporta reconocimiento de voz");
+        }
+
+        function handleSpeech(text) {
+            const hasWake = wakePhrases.some(phrase => text.includes(phrase));
+
+            if (hasWake) {
+                isActive = true;
+                let cleanText = text;
+                wakePhrases.forEach(p => cleanText = cleanText.replace(p, '').trim());
+
+                if (cleanText) {
+                    addMessage(text, 'user');
+                    processCommand(cleanText);
+                } else {
+                    speak("Sí, señor. A tus órdenes.");
+                }
+            } else if (isActive && text.length > 3) {
+                addMessage(text, 'user');
+                processCommand(text);
+            }
+        }
+
+        async function processCommand(text) {
+            updateStatus("Procesando...", true);
+            animateWave();
+
+            try {
+                const response = await fetch('http://192.168.40.14:5000/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: text })
+                });
+
+                const data = await response.json();
+                const reply = data.response || "Disculpa, no pude procesar eso.";
+                
+                addMessage(reply, 'jarvis');
+                await speak(reply);
+                
+                updateStatus("Escuchando...", true);
+            } catch (error) {
+                console.error('Error:', error);
+                const fallback = "Tengo problemas de conexión con el servidor, señor.";
+                addMessage(fallback, 'jarvis');
+                speak(fallback);
+            }
+        }
+
+        function speak(text) {
+            return new Promise((resolve) => {
+                recognition.stop();
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'es-ES';
+                utterance.rate = 1.0;
+                utterance.pitch = 0.9;
+                
+                const voices = speechSynthesis.getVoices();
+                const voice = voices.find(v => v.lang.includes('es'));
+                if (voice) utterance.voice = voice;
+
+                utterance.onend = () => {
+                    setTimeout(() => recognition.start(), 1000);
+                    resolve();
+                };
+
+                speechSynthesis.speak(utterance);
+            });
+        }
+
+        function addMessage(text, type) {
+            const transcript = document.getElementById('transcript');
+            const msg = document.createElement('div');
+            msg.className = `msg ${type}`;
+            msg.innerHTML = `<strong>${type === 'user' ? 'TÚ' : 'JARVIS'}:</strong> ${text}`;
+            transcript.appendChild(msg);
+            transcript.scrollTop = transcript.scrollHeight;
+        }
+
+        function updateStatus(text, listening = false) {
+            const status = document.getElementById('status');
+            status.textContent = text;
+            status.className = listening ? 'status-text listening' : 'status-text';
+        }
+
+        function animateWave() {
+            const bars = document.querySelectorAll('.wave-bar');
+            const interval = setInterval(() => {
+                bars.forEach(bar => {
+                    bar.style.height = `${Math.random() * 60 + 20}px`;
+                });
+            }, 100);
+            setTimeout(() => clearInterval(interval), 2000);
+        }
+
+        // Reloj
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('hud-time').textContent = now.toLocaleTimeString('es-ES');
+        }, 1000);
+
+        // Cargar voces
+        speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+    </script>
+</body>
+</html>
