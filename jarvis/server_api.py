@@ -82,8 +82,14 @@ class JarvisServer:
         
         @self.app.route('/')
         def index():
-            """Página principal - redirige al dashboard"""
-            return "<h1>JARVIS Server</h1><p>API corriendo correctamente</p><p><a href='/dashboard.html'>Ir al Dashboard</a></p>"
+            """Página principal - Interfaz JARVIS V2"""
+            import os
+            ui_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'jarvis_ui_v2.html')
+            try:
+                with open(ui_path, 'r', encoding='utf-8') as f:
+                    return f.read()
+            except FileNotFoundError:
+                return "<h1>JARVIS UI no encontrada</h1>", 404
         
         @self.app.route('/dashboard.html')
         def dashboard():

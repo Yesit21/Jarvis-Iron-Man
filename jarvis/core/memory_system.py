@@ -256,20 +256,22 @@ class MemorySystem:
         """
         context_parts = []
         
-        # Buscar conversaciones relevantes
-        similar_convs = self.recall_similar_conversations(current_query, n_results=2)
-        if similar_convs:
-            context_parts.append("## Conversaciones Relevantes del Pasado:")
-            for conv in similar_convs[:2]:
-                if conv['relevance'] > 0.7:  # Solo si es muy relevante
-                    context_parts.append(f"- Usuario preguntó: {conv['user_input'][:100]}")
+        # Buscar conversaciones relevantes (solo si hay conversaciones)
+        if self.conversations.count() > 0:
+            similar_convs = self.recall_similar_conversations(current_query, n_results=2)
+            if similar_convs:
+                context_parts.append("## Conversaciones Relevantes del Pasado:")
+                for conv in similar_convs[:2]:
+                    if conv['relevance'] > 0.7:  # Solo si es muy relevante
+                        context_parts.append(f"- Usuario preguntó: {conv['user_input'][:100]}")
         
-        # Buscar hechos del usuario
-        user_facts = self.recall_user_facts(current_query, n_results=3)
-        if user_facts:
-            context_parts.append("\n## Lo que sé sobre ti:")
-            for fact in user_facts[:3]:
-                context_parts.append(f"- {fact}")
+        # Buscar hechos del usuario (solo si hay hechos)
+        if self.user_facts.count() > 0:
+            user_facts = self.recall_user_facts(current_query, n_results=3)
+            if user_facts:
+                context_parts.append("\n## Lo que sé sobre ti:")
+                for fact in user_facts[:3]:
+                    context_parts.append(f"- {fact}")
         
         # Preferencias
         preferences = self.get_all_preferences()

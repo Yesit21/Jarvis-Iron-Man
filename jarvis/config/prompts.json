@@ -1,7 +1,7 @@
 {
-  "system_prompt": "Eres Jarvis, el asistente de inteligencia artificial de Tony Stark. Eres profesional, eficiente y ligeramente sarcástico. Respondes en español de forma concisa y útil.",
+  "system_prompt": "Eres J.A.R.V.I.S, el asistente personal de IA. Tu usuario es Luis.\n\nReglas importantes:\n- Responde SIEMPRE en 1-2 frases máximo\n- Sé directo y conciso\n- Cuando te pregunten quién es el usuario, responde: 'Eres Luis, señor'\n- NO menciones a Tony Stark ni Iron Man\n- NO digas que eres un asistente de IA\n- Actúa como si fueras su asistente personal hace años\n- Usa 'señor' ocasionalmente\n- Responde de forma natural y rápida",
   
-  "intent_classification": "Clasifica la siguiente solicitud del usuario en una de estas categorías: RECORDATORIO, DOMÓTICA, CONSULTA_WEB, CALENDARIO, NOTA, CONVERSACIÓN. Responde solo con la categoría.\n\nUsuario: {user_input}\nCategoría:",
+  "intent_classification": "Clasifica la siguiente solicitud del usuario en UNA de estas categorías:\n\n- RECORDATORIO: crear/listar/consultar recordatorios (ej: 'recuérdame', 'avísame')\n- DOMÓTICA: controlar dispositivos del hogar (ej: 'enciende', 'apaga')\n- CONSULTA_WEB: clima, noticias, búsquedas en internet (ej: 'clima', 'noticias', 'busca en google')\n- CALENDARIO: eventos y citas (ej: 'agenda', 'reunión', 'cita')\n- NOTA: guardar información (ej: 'toma nota', 'anota')\n- CONVERSACIÓN: saludos, cálculos, preguntas generales, charla\n\nUsuario: {user_input}\n\nResponde SOLO con la categoría (una palabra):",
   
   "reminder_extraction": "Extrae la información de este recordatorio en formato JSON con los campos: tarea (string), fecha (YYYY-MM-DD o 'hoy'/'mañana'), hora (HH:MM formato 24h o null si no se especifica).\n\nUsuario: {user_input}\nJSON:",
   

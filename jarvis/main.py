@@ -32,6 +32,10 @@ class Jarvis:
         self.config = self._load_config()
         self.prompts = self._load_prompts()
         
+        # OPTIMIZACIÓN: Configurar temperatura más baja para respuestas rápidas
+        self.config["ollama"]["temperature"] = 0.5
+        self.config["ollama"]["max_tokens"] = 500  # Respuestas más cortas
+        
         # Inicializar componentes core
         self.ollama = OllamaClient(
             base_url=self.config["ollama"]["base_url"],

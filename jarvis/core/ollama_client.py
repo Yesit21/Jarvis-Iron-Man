@@ -13,14 +13,14 @@ class OllamaClient:
         self.base_url = base_url
         self.model = model
         
-    def generate(self, prompt: str, temperature: float = 0.7, max_tokens: int = 2000) -> Optional[str]:
+    def generate(self, prompt: str, temperature: float = 0.3, max_tokens: int = 150) -> Optional[str]:
         """
         Genera una respuesta usando el modelo de Ollama
         
         Args:
             prompt: El prompt a enviar
-            temperature: Control de aleatoriedad (0.0-1.0)
-            max_tokens: Máximo de tokens en la respuesta
+            temperature: Control de aleatoriedad (0.0-1.0) - Menor = más rápido
+            max_tokens: Máximo de tokens en la respuesta - Menor = más rápido
             
         Returns:
             Respuesta del modelo o None si hay error
@@ -33,11 +33,15 @@ class OllamaClient:
                 "stream": False,
                 "options": {
                     "temperature": temperature,
-                    "num_predict": max_tokens
+                    "num_predict": max_tokens,
+                    "top_k": 20,  # Más rápido
+                    "top_p": 0.8,  # Más rápido
+                    "num_ctx": 1024,  # Contexto mínimo para velocidad
+                    "repeat_penalty": 1.1
                 }
             }
             
-            response = requests.post(url, json=payload, timeout=60)
+            response = requests.post(url, json=payload, timeout=15)  # Timeout reducido para velocidad
             response.raise_for_status()
             
             result = response.json()
